@@ -88,6 +88,15 @@
       }]
     }
   }, {
+    "method": "shell.enter",
+    "params": {
+      "message": "pip install safetensors==0.3.2",
+      "on": [{
+        "event": null,
+        "return": true
+      }]
+    }
+  }, {
     "method": "input",
     "params": {
       "title": "Install Success",
