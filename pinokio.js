@@ -1,17 +1,11 @@
-const os = require('os')
-const fs = require('fs')
-const path = require("path")
-const exists = (filepath) => {
-  return new Promise(r=>fs.access(filepath, fs.constants.F_OK, e => r(!e)))
-}
 module.exports = {
   title: "audiocraft_plus",
   description: "One click installer for AudioCraft_plus",
   icon: "icon.jpeg",
   menu: async (kernel) => {
-    let installed = await exists(path.resolve(__dirname, "audiocraft_plus", "env"))
+    let installed = await kernel.exists(__dirname, "audiocraft_plus", "env")
     if (installed) {
-      let session = (await kernel.loader.load(path.resolve(__dirname, "session.json"))).resolved
+      let session = await kernel.require(__dirname, "session.json")
       return [{
         when: "start.json",
         on: "<i class='fa-solid fa-spin fa-circle-notch'></i> Running",

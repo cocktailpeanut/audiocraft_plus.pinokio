@@ -1,4 +1,9 @@
 {
+  "cmds": {
+    "nvidia": "pip install torch torchvision torchaudio xformers --index-url https://download.pytorch.org/whl/cu118",
+    "amd": "pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.6",
+    "default": "pip install torch torchvision torchaudio"
+  },
   "requires": [{
     "type": "conda",
     "name": "ffmpeg",
@@ -12,103 +17,18 @@
   }, {
     "method": "shell.run",
     "params": {
-      "message": "{{os.platform() === 'darwin' ? 'git checkout mac-os-fix' : ''}}",
+      "message": "{{platform === 'darwin' ? 'git checkout mac-os-fix' : ''}}",
       "path": "audiocraft_plus"
     }
   }, {
     "method": "shell.run",
     "params": {
-      "message": "{{os.platform() === 'win32' ? 'python' : 'python3'}} -m venv env",
+      "venv": "env",
+      "message": [
+        "{{(gpu === 'nvidia' ? self.cmds.nvidia : (gpu === 'amd' ? self.cmds.amd : self.cmds.default))}}",
+        "pip install -r requirements.txt -e ."
+      ],
       "path": "audiocraft_plus"
-    }
-  }, {
-    "method": "shell.start",
-    "params": {
-      "path": "audiocraft_plus",
-      "env": {
-        "HF_HOME": "../huggingface"
-      }
-    }
-  }, {
-      "method": "shell.enter",
-      "params": {
-        "message": "{{os.platform() === 'win32' ? 'conda_hook' : 'eval \"$(conda shell.bash hook)\"'}}",
-        "on": [{
-          "event": null,
-          "return": true
-        }]
-      }  
-  }, {
-    "method": "shell.enter",
-    "params": {
-      "message": "conda create -y -p conda_env",
-      "on": [{
-        "event": null,
-        "return": true
-      }]
-    }  
-  }, {
-    "method": "shell.enter",
-    "params": {
-      "message": "conda install -y \"ffmpeg<5\" -c  conda-forge -p conda_env",
-      "on": [{
-        "event": null,
-        "return": true
-      }]
-    }  
-  }, {
-    "method": "shell.enter",
-    "params": {
-      "message": "{{os.platform() === 'win32' ? 'env\\\\Scripts\\\\activate' : 'source env/bin/activate'}} env",
-      "on": [{
-        "event": null,
-        "return": true
-      }]
-    }
-  }, {
-    "method": "shell.enter",
-    "params": {
-      "message": "npx --yes torchcraft@0.0.15",
-      "on": [{
-        "event": null,
-        "return": true
-      }]
-    }
-  }, {
-    "method": "shell.enter",
-    "params": {
-      "message": "pip install -r torchcraft.txt",
-      "on": [{
-        "event": null,
-        "return": true
-      }]
-    }
-  }, {
-    "method": "shell.enter",
-    "params": {
-      "message": "{{gpu === 'nvidia' ? 'pip install xformers==0.0.22.post4 --index-url https://download.pytorch.org/whl/cu118' : 'pip install xformers==0.0.22.post4'}}",
-      "on": [{
-        "event": null,
-        "return": true
-      }]
-    }
-  }, {
-    "method": "shell.enter",
-    "params": {
-      "message": "pip install safetensors==0.3.2 protobuf",
-      "on": [{
-        "event": null,
-        "return": true
-      }]
-    }
-  }, {
-    "method": "shell.enter",
-    "params": {
-      "message": "pip install -r requirements.txt -e .",
-      "on": [{
-        "event": null,
-        "return": true
-      }]
     }
   }, {
     "method": "input",

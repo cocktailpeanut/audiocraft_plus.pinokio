@@ -1,36 +1,21 @@
 {
+  "daemon": true,
   "run": [{
-    "method": "shell.start",
+    "method": "shell.run",
     "params": {
+      "venv": "env",
       "path": "audiocraft_plus",
-      "env": {
-        "HF_HOME": "../huggingface",
-        "path": ["{{os.platform() === 'win32' ? path.resolve(cwd, 'audiocraft_plus', 'conda_env', 'Library', 'bin') : path.resolve(cwd, 'audiocraft_plus', 'conda_env', 'bin')}}"]
-      }
-    }
-  }, {
-    "method": "shell.enter",
-    "params": {
-      "message": "{{os.platform() === 'win32' ? 'env\\\\Scripts\\\\activate' : 'source env/bin/activate'}} env",
-      "on": [{
-        "event": null,
-        "return": true
-      }]
-    }
-  }, {
-    "method": "shell.enter",
-    "params": {
       "message": "python app.py",
       "on": [{
-        "event": "/(http:\/\/[0-9.:]+)/",
-        "return": "{{event.matches[0][1]}}"
+        "event": "/http:\/\/[0-9.:]+/",
+        "done": true
       }]
     }
   }, {
     "method": "self.set",
     "params": {
       "session.json": {
-        "url": "{{input}}"
+        "url": "{{input.event[0]}}"
       }
     }
   }, {
@@ -39,8 +24,5 @@
       "uri": "{{self.session.url}}",
       "target": "_blank"
     }
-  }, {
-    "method": "process.wait"
   }]
 }
-
